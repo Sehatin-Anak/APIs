@@ -3,14 +3,17 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const port = process.env.PORT
-const Router = require('./router/Router')
+const authRouter = require('./router/authRouter')
+const homeRouter = require('./router/homeRouter')
 
-app.use(cors)
 app.use(express.json())
+app.use(cors())
 
 // router
 
-app.use('/', Router)
+app.use('/', authRouter)
+app.use('/', homeRouter)
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)

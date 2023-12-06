@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  password     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  refreshToken String   @unique
+}
+
+// <---Data flow food recomendation features--->
+// 
+// child -> 
+//      #foodRecomend
+//          ##fruit
+//              ###fruitrecepies
+//              ###fruitrecepies
+//              ###fruitrecepies
+//          ##vegetables
+//              ###vegetablesrecepies
+//              ###vegetablesrecepies
+//              ###vegetablesrecepies
+//          ##snack
+//              ###snackrecepies
+//              ###snackrecepies
+//              ###snackrecepies
+// 
+// ***there is 7 foodRecomend(one foodRecomend/day)***
+
+model childData {
+  id            Int                 @id @unique @default(autoincrement())
+  name          String
+  age           Int
+  gender        String
+  height        String
+  weight        String
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  foodRecomends RecomendationFood[]
+}
+
+model RecomendationFood {
+  id         Int                 @id @unique @default(autoincrement())
+  child      childData           @relation(fields: [childId], references: [id])
+  childId    Int
+  fruits     FruitRecipes[]
+  vegetables VegetablesRecipes[]
+  snacks     SnackRecipes[]
+}
+
+model FruitRecipes {
+  id             Int               @id @unique @default(autoincrement())
+  name           String
+  description    String
+  imageUrl       String?
+  foodRecomend   RecomendationFood @relation(fields: [foodRecomendId], references: [id])
+  foodRecomendId Int
+}
+
+model VegetablesRecipes {
+  id             Int               @id @unique @default(autoincrement())
+  name           String
+  description    String
+  imageUrl       String?
+  foodRecomend   RecomendationFood @relation(fields: [foodRecomendId], references: [id])
+  foodRecomendId Int
+}
+
+model SnackRecipes {
+  id             Int               @id @unique @default(autoincrement())
+  name           String
+  description    String
+  imageUrl       String?
+  foodRecomend   RecomendationFood @relation(fields: [foodRecomendId], references: [id])
+  foodRecomendId Int
+}
