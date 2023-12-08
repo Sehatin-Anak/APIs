@@ -16,69 +16,49 @@ model user {
   refreshToken String   @unique
 }
 
-// <---Data flow food recomendation features--->
-// 
-// child -> 
-//      #foodRecomend
-//          ##fruit
-//              ###fruitrecepies
-//              ###fruitrecepies
-//              ###fruitrecepies
-//          ##vegetables
-//              ###vegetablesrecepies
-//              ###vegetablesrecepies
-//              ###vegetablesrecepies
-//          ##snack
-//              ###snackrecepies
-//              ###snackrecepies
-//              ###snackrecepies
-// 
-// ***there is 7 foodRecomend(one foodRecomend/day)***
+model Child {
+  id          Int      @id @default(autoincrement())
+  tokenId     String   @unique
+  name        String
+  age         Int
+  gender      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ageCategory Int?
+}
 
-model childData {
-  id            Int                 @id @unique @default(autoincrement())
+model Article {
+  id        Int            @id @default(autoincrement())
+  author    String
+  year      Int
+  title     String
+  content   String         @db.VarChar(5000)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  bookmark  UserBookmark[]
+}
+
+model FoodRecom {
+  id            Int            @id @default(autoincrement())
   name          String
-  age           Int
-  gender        String
-  height        String
-  weight        String
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
-  foodRecomends RecomendationFood[]
+  nutritionInfo String
+  img           String
+  description   String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  bookmark      UserBookmark[]
 }
 
-model RecomendationFood {
-  id         Int                 @id @unique @default(autoincrement())
-  child      childData           @relation(fields: [childId], references: [id])
-  childId    Int
-  fruits     FruitRecipes[]
-  vegetables VegetablesRecipes[]
-  snacks     SnackRecipes[]
-}
+model UserBookmark {
+  id          Int        @id @default(autoincrement())
+  userToken   String
+  foodRecomId Int?
+  articleId   Int?
+  foodRecom   FoodRecom? @relation(fields: [foodRecomId], references: [id])
+  article     Article?   @relation(fields: [articleId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
-model FruitRecipes {
-  id             Int               @id @unique @default(autoincrement())
-  name           String
-  description    String
-  imageUrl       String?
-  foodRecomend   RecomendationFood @relation(fields: [foodRecomendId], references: [id])
-  foodRecomendId Int
-}
-
-model VegetablesRecipes {
-  id             Int               @id @unique @default(autoincrement())
-  name           String
-  description    String
-  imageUrl       String?
-  foodRecomend   RecomendationFood @relation(fields: [foodRecomendId], references: [id])
-  foodRecomendId Int
-}
-
-model SnackRecipes {
-  id             Int               @id @unique @default(autoincrement())
-  name           String
-  description    String
-  imageUrl       String?
-  foodRecomend   RecomendationFood @relation(fields: [foodRecomendId], references: [id])
-  foodRecomendId Int
+  @@unique([userToken, foodRecomId], name: "User_FoodRecom_Unique")
+  @@unique([userToken, articleId], name: "User_Article_Unique")
 }

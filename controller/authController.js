@@ -120,3 +120,7 @@ exports.refreshToken = async (req, res) => {
     console.log(err);
   }
 };
+
+exports.logout = async (req, res) => {
+  // develop soon :)
+}
