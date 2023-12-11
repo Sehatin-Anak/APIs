@@ -1,20 +1,35 @@
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient
+const prisma = new PrismaClient();
 
-exports.getRecomend = async (req, res) => {
-    try {
-        const child = await prisma.child.findUnique({
-            where: {tokenId: req.body.tokenId}
-        })
+const getRecomend = async (req, res) => {
+  try {
+    const child = await prisma.child.findUnique({
+      where: { tokenId: req.query.tokenId },
+    });
 
-        const ageCategory = child.ageCategory
+    const ageCategory = child.ageCategory;
+    
+    // pass ageCategory to API ML (make external request using axios)
+    // store response from ML to database and then front end?
+    
+    // assumming response data recipe from ML come from body
+    const dataRecipe = {
+      name: req.body.name,
+      nutritionInfo: req.body.nutritionInfo,
+      description: req.body.description,
+      img: req.body.img,
+    };
 
-        // pass ageCategory to API ML
-        // store response from ML to database and front end
+    // **** GET RECIPE DATA FROM FOODRECOM TO CHECK,
+    // **** IF USER GET FOODRECOM FOR FIRST TIME, INSERT DATA RECIPE FROM ML TO DB
+    // **** ELSE RETRIEVE DATA FROM FOODRECOM TABLE
 
-    } catch (error) {
-        res.status(400).json({
-            error: error
-        })
-    }
-}
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({
+      error: error,
+    });
+  }
+};
+
+module.exports = getRecomend

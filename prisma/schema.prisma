@@ -13,18 +13,72 @@ model user {
   password     String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  refreshToken String   @unique
+  refreshToken String?  @unique
 }
 
 model Child {
-  id          Int      @id @default(autoincrement())
-  tokenId     String   @unique
+  id          Int         @id @default(autoincrement())
+  tokenId     String
   name        String
   age         Int
   gender      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   ageCategory Int?
+  foodRecom   FoodRecom[]
+}
+
+model FoodRecom {
+  id              Int            @id @default(autoincrement())
+  name            String
+  description     String         @db.VarChar(1000)
+  img             String
+  Category        String
+  agregateRating  Float
+  reviewCount     Int
+  nutritionInfoId Int            @unique
+  childId         Int
+  nutritionInfo   NutritionInfo  @relation(fields: [nutritionInfoId], references: [id])
+  child           Child          @relation(fields: [childId], references: [id])
+  Ingredients     FoodRecomIngredient[]
+  Instructions    FoodRecomInstruction[]
+  bookmark        UserBookmark[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model NutritionInfo {
+  id            Int        @id @default(autoincrement())
+  calories      String
+  fat           String
+  saturatedFat  String
+  cholesterol   String
+  sodium        String
+  carbohydrates String
+  fiber         String
+  sugar         String
+  protein       String
+  foodRecom     FoodRecom?
+}
+
+model FoodRecomIngredient {
+  id          Int       @default(autoincrement())
+  ingredient  String
+  quality     String    @db.VarChar(1000)
+  foodRecomId Int
+  foodRecom   FoodRecom @relation(fields: [foodRecomId], references: [id])
+
+  @@id([id, ingredient])
+}
+
+model FoodRecomInstruction {
+  id          Int       @default(autoincrement())
+  stepOrder   Int
+  instruction String
+  foodRecomId Int
+  foodRecom   FoodRecom @relation(fields: [foodRecomId], references: [id])
+
+  @@id([id, stepOrder])
 }
 
 model Article {
@@ -36,17 +90,6 @@ model Article {
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   bookmark  UserBookmark[]
-}
-
-model FoodRecom {
-  id            Int            @id @default(autoincrement())
-  name          String
-  nutritionInfo String
-  img           String
-  description   String
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  bookmark      UserBookmark[]
 }
 
 model UserBookmark {

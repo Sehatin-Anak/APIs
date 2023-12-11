@@ -9,8 +9,28 @@ exports.getArticle = async (req, res) => {
             data: articles
         })
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             error: error
+        })
+    }
+}
+
+exports.createArticle = async (req, res) => {
+    const data = req.body
+
+    try {
+        const article = await prisma.article.create({
+            data
+        })
+
+        res.status(200).json({
+            data
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            error
         })
     }
 }

@@ -1,3 +1,8 @@
+// 
+// *****Code ini buat percobaan jwt aja*****
+// *****Implementasi authnya tetep pake firebase*****
+// 
+
 require("dotenv").config();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
@@ -24,6 +29,7 @@ exports.register = async (req, res) => {
         });
       })
       .catch((err) => {
+        console.log(err)
         res.status(400).json({
           message: err,
         });
@@ -86,41 +92,3 @@ exports.login = async (req, res) => {
     }
   });
 };
-
-exports.refreshToken = async (req, res) => {
-  const { refreshToken } = req.body;
-
-  const user = await prisma.user.findUnique({
-    where: {
-      refreshToken: refreshToken,
-    },
-  });
-
-  const userPayload = {
-    id: user.id,
-    username: user.username,
-  };
-
-  if (!user) res.status(401).json({ message: "Invalid refresh token.." });
-
-  try {
-    const decodedRefreshToken = jwt.verify(refreshToken, refreshTokenSecret);
-
-    const newAccessToken = generateAccessToken(userPayload);
-
-    res.json({
-      user: userPayload,
-      newAccessToken,
-    });
-  } catch (err) {
-    if (err.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Refresh token expired" });
-    }
-    res.status(401).json({ message: "Invalid refresh token" });
-    console.log(err);
-  }
-};
-
-exports.logout = async (req, res) => {
-  // develop soon :)
-}

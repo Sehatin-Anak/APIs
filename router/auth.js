@@ -1,3 +1,8 @@
+// 
+// *****Code ini buat percobaan jwt aja*****
+// *****Implementasi authnya tetep pake firebase*****
+// 
+
 const express = require('express')
 const router = express.Router()
 const auth = require('../controller/authController')
@@ -7,7 +12,5 @@ const auth = require('../controller/authController')
 router.post('/register', auth.register)
 
 router.post('/login', auth.login)
-
-router.post('/refresh-token', auth.refreshToken)
 
 module.exports = router
