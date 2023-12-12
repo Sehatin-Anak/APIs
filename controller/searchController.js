@@ -23,11 +23,32 @@ const search = async (req, res) => {
 
     const foodRecom = await prisma.foodRecom.findMany({
       where: {
-        OR: [
-          
-        ]
-      }
+        description: {
+          contains: search
+        },
+        nutritionInfo: {
+          OR: [
+            {calories: {contains: search}},
+            {fat: {contains: search}},           
+            {saturatedFat: {contains: search}},  
+            {cholesterol: {contains: search}},   
+            {sodium: {contains: search}},
+            {carbohydrates: {contains: search}}, 
+            {fiber: {contains: search}},         
+            {sugar: {contains: search}},         
+            {protein: {contains: search}},       
+          ]
+        }
+      },
     })
+    // include: {
+    //   nutritionInfo: {
+    //     where: {
+    //       OR: [
+    //       ]
+    //     }
+    //   }
+    // }
     const articles = await prisma.article.findMany({
       where: {
         OR: [

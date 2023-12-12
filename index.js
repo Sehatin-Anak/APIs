@@ -5,7 +5,8 @@ const cors = require('cors')
 const port = process.env.PORT
 const authRouter = require('./router/auth')
 const dashboardRouter = require('./router/dashboard')
-const childBio = require('./router/childBio')
+const childBioRouter = require('./router/childBio')
+const bookmarkRouter = require('./router/bookmark')
 
 app.use(express.json())
 app.use(cors())
@@ -14,7 +15,8 @@ app.use(cors())
 
 app.use('/', authRouter)
 app.use('/', dashboardRouter)
-app.use('/', childBio)
+app.use('/', childBioRouter)
+app.use('/', bookmarkRouter)
 
 
 app.listen(port, () => {
