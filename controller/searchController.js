@@ -1,75 +1,39 @@
 const { PrismaClient } = require("@prisma/client");
-
+const { seraching } = require("../utils/utils");
 const prisma = new PrismaClient();
 
 const search = async (req, res) => {
-  const search = req.query.search;
-  const { authorization } = req.headers;
-
-  if (!authorization) {
-    res.status(400).json({
-      error: "Missing required header: Authorization",
-    });
-  }
-
-  const tokenId = authorization.split(" ")[1];
+  const search = req.query.search || "";
+  const words = search.split(" ");
 
   try {
-    const child = await prisma.child.findUnique({
-      where: {
-        tokenId,
+    // const child = await prisma.child.findFirst({
+    //   where: {
+    //     tokenId,
+    //   },
+    // });
+
+    const foodRecom = await prisma.foodRecom.findMany({
+      include: {
+        nutritionInfo: true,
+        Ingredients: true,
+        Instructions: true,
       },
     });
 
-    const foodRecom = await prisma.foodRecom.findMany({
-      where: {
-        description: {
-          contains: search
-        },
-        nutritionInfo: {
-          OR: [
-            {calories: {contains: search}},
-            {fat: {contains: search}},           
-            {saturatedFat: {contains: search}},  
-            {cholesterol: {contains: search}},   
-            {sodium: {contains: search}},
-            {carbohydrates: {contains: search}}, 
-            {fiber: {contains: search}},         
-            {sugar: {contains: search}},         
-            {protein: {contains: search}},       
-          ]
-        }
-      },
-    })
-    // include: {
-    //   nutritionInfo: {
-    //     where: {
-    //       OR: [
-    //       ]
-    //     }
-    //   }
-    // }
     const articles = await prisma.article.findMany({
-      where: {
-        OR: [
-          {
-            title: {
-              contains: search,
-            },
-            content: {
-              contains: search,
-            },
-          },
-        ],
+      include: {
+        author: true,
       },
     });
+
+    const foodRecomResult = seraching(foodRecom, search)
+    const articleResult = seraching(articles, search)
 
     res.status(200).json({
       data: {
-        fruitsResult,
-        vegetablesResult,
-        snacksResult,
-        articles
+        foodRecom: foodRecomResult,
+        articles: articleResult
       },
     });
   } catch (error) {
@@ -80,4 +44,4 @@ const search = async (req, res) => {
   }
 };
 
-module.exports = search
+module.exports = search;

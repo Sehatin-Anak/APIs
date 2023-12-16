@@ -1,79 +1,124 @@
 const { PrismaClient } = require("@prisma/client");
+const { paginateFoodRecom, datafromML} = require("../utils/utils");
 const prisma = new PrismaClient();
+const fs = require("fs/promises");
 
-const getRecomend = async (req, res) => {
+exports.getRecomend = async (req, res) => {
+  const pagination = req.query.pagination;
+  const ageCategory = parseInt(req.query.ageCategory);
+  let finalData;
+
   try {
-    const child = await prisma.child.findUnique({
+    const child = await prisma.child.findFirst({
       where: { tokenId: req.query.tokenId },
+      include: {
+        foodRecom: {
+          where: {
+            ageCategory: ageCategory || null
+          },
+          include: {
+            nutritionInfo: true,
+            Ingredients: true,
+            Instructions: {
+              orderBy: {
+                stepOrder: "asc",
+              },
+            },
+          },
+        },
+      },
     });
-
-    const ageCategory = child.ageCategory;
 
     // pass ageCategory to API ML (make external request using axios)
     // store response from ML to database and then front end?
-
-    // assumming response data recipe from ML come from body
-    const nutritionInfoData = {
-      calories: req.body.calories,
-      fat: req.body.fat,
-      saturatedFat: req.body.saturatedFat,
-      cholesterol: req.body.cholesterol,
-      sodium: req.body.sodium,
-      carbohydrates: req.body.carbohydrates,
-      fiber: req.body.fiber,
-      sugar: req.body.sugar,
-      protein: req.body.protein,
-    };
-
-    const dataFoodRecom = {
-      name: req.body.name,
-      description: req.body.description,
-      img: req.body.img,
-      Category: req.body.Category,
-      agregateRating: req.body.agregateRating,
-      reviewCount: req.body.reviewCount,
-    };
-    // assumming response data recipe from ML come from body
-
-    // ***** TESTING INPUT DATA FOR TESTING SEARCH FEATURES *****
-
-    // create nutrition info then create foodrecom then connect
-    // new foodrecom data to nutrition that was just created
-    const result = await prisma.$transaction([
-      prisma.nutritionInfo
-        .create({
-          data: nutritionInfoData,
-        })
-        .then((data) => {
-          prisma.foodRecom.update({
-            where: {
-              childId: child.id,
-            },
-            data: {
-              dataFoodRecom,
-              nutritionInfo: {
-                connect: { id: data.id },
-              },
-            },
-          });
-        }),
-    ]);
-
-    res.json({
-      result,
-    });
-
-    // ***** TESTING INPUT DATA FOR TESTING SEARCH FEATURES *****
-
+    
     // **** GET RECIPE DATA FROM FOODRECOM TO CHECK,
     // **** IF USER GET FOODRECOM FOR FIRST TIME, INSERT DATA RECIPE FROM ML TO DB
     // **** ELSE RETRIEVE DATA FROM FOODRECOM TABLE
+
+    if (child.foodRecom.length === 0) {
+      const datas = await datafromML(child.ageCategory || null)
+      const created = [];
+      
+      for (let i = 0; i < datas.length; i++) {
+        const create = await prisma.foodRecom.create({
+          data: {
+            ...datas[i].foodRecom,
+            ageCategory: ageCategory || null,
+            nutritionInfo: {
+              create: datas[i].nutritionInfo,
+            },
+            Ingredients: {
+              create: datas[i].Ingredient,
+            },
+            Instructions: {
+              create: datas[i].Instruction,
+            },
+            child: {
+              connect: { id: child.id },
+            },
+          },
+          include: {
+            nutritionInfo: true,
+            Ingredients: true,
+            Instructions: {
+              orderBy: {
+                stepOrder: "asc",
+              },
+            },
+          },
+        });
+
+        created.push(create);
+      }
+
+      finalData = paginateFoodRecom(created, pagination);
+
+      return res.status(200).json({
+        message: 'Data created',
+        data: finalData,
+      });
+    }
+
+    finalData = paginateFoodRecom(child.foodRecom, pagination);
+
+    res.status(200).json({
+      data: finalData,
+    });
   } catch (error) {
     console.log(error);
     res.status(400).json({
-      error: error,
+      error: error.message,
     });
   }
 };
 
-module.exports = getRecomend;
+exports.getUniqueRecom = async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  try {
+    const foodRecom = await prisma.foodRecom.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        nutritionInfo: true,
+        Ingredients: true,
+        Instructions: {
+          orderBy: {
+            stepOrder: 'asc'
+          }
+        },
+      },
+    });
+
+    res.status(200).json({
+      data: foodRecom,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      error,
+    });
+  }
+};

@@ -5,7 +5,7 @@ exports.getChild = async (req, res) => {
   const tokenId = req.query.tokenId
 
   try {
-    const child = await prisma.child.findUnique({
+    const child = await prisma.child.findFirst({
       where: {
         tokenId
       }
@@ -35,18 +35,12 @@ exports.create = async (req, res) => {
     name: req.body.name,
     age: req.body.age,
     gender: req.body.gender,
-    ageCategory: req.body.ageCategory
+    ageCategory: req.body.ageCategory || null
   };
   
   try {
     const child = await prisma.child.create({
       data: data,
-      FoodRecom: {
-        create: {}
-      },
-      include: {
-        foodRecom: true
-      }
     });
 
     res.status(200).json({
@@ -64,18 +58,19 @@ exports.create = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
+  const id = parseInt(req.params.id)
   const data = {
     name: req.body.name,
     age: req.body.age,
     gender: req.body.gender,
-    ageCategory: req.body.ageCategory
+    ageCategory: req.body.ageCategory || null
   }
 
 
   try {
     const updateChild = await prisma.child.update({
       where: {
-        id: req.params.id
+        id: id
       },
       data
     })
@@ -85,9 +80,8 @@ exports.update = async (req, res) => {
     })
     
   } catch (error) {
-    console.log(error)
     res.status(400).json({
-      error
+      error: error.message
     })
   }
 }

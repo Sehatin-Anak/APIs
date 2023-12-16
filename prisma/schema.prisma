@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -29,67 +30,87 @@ model Child {
 }
 
 model FoodRecom {
-  id              Int            @id @default(autoincrement())
+  id              Int                    @id @default(autoincrement())
+  ageCategory     Int?
   name            String
-  description     String         @db.VarChar(1000)
+  description     String                 @db.VarChar(1000)
   img             String
   Category        String
   agregateRating  Float
   reviewCount     Int
-  nutritionInfoId Int            @unique
+  nutritionInfoId Int?                   @unique
   childId         Int
-  nutritionInfo   NutritionInfo  @relation(fields: [nutritionInfoId], references: [id])
-  child           Child          @relation(fields: [childId], references: [id])
+  nutritionInfo   NutritionInfo?         @relation(fields: [nutritionInfoId], references: [id])
+  child           Child                  @relation(fields: [childId], references: [id])
   Ingredients     FoodRecomIngredient[]
   Instructions    FoodRecomInstruction[]
   bookmark        UserBookmark[]
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  @@fulltext([name, description, Category])
 }
 
 model NutritionInfo {
   id            Int        @id @default(autoincrement())
-  calories      String
-  fat           String
-  saturatedFat  String
-  cholesterol   String
-  sodium        String
-  carbohydrates String
-  fiber         String
-  sugar         String
-  protein       String
+  calories      Float
+  fat           Float
+  saturatedFat  Float
+  cholesterol   Float
+  sodium        Float
+  carbohydrates Float
+  fiber         Float
+  sugar         Float
+  protein       Float
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
   foodRecom     FoodRecom?
 }
 
 model FoodRecomIngredient {
   id          Int       @default(autoincrement())
   ingredient  String
-  quality     String    @db.VarChar(1000)
   foodRecomId Int
   foodRecom   FoodRecom @relation(fields: [foodRecomId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@id([id, ingredient])
+  @@fulltext([ingredient])
 }
 
 model FoodRecomInstruction {
   id          Int       @default(autoincrement())
   stepOrder   Int
-  instruction String
+  instruction String    @db.VarChar(2000)
   foodRecomId Int
   foodRecom   FoodRecom @relation(fields: [foodRecomId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@id([id, stepOrder])
+  @@fulltext([instruction])
 }
 
 model Article {
-  id        Int            @id @default(autoincrement())
-  author    String
-  year      Int
-  title     String
-  content   String         @db.VarChar(5000)
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  bookmark  UserBookmark[]
+  id              Int            @id @default(autoincrement())
+  author          Author[]
+  publicationDate String
+  title           String
+  url             String
+  content         String         @db.VarChar(5000)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  bookmark        UserBookmark[]
+
+  @@fulltext([title, content])
+}
+
+model Author {
+  id        Int     @id @default(autoincrement())
+  name      String
+  articleId Int
+  article   Article @relation(fields: [articleId], references: [id])
 }
 
 model UserBookmark {
