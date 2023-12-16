@@ -50,7 +50,7 @@ exports.login = async (req, res) => {
   //   });
   // });
 };
-
+//
 exports.logout = async (req, res) => {
   auth.signOut().then(() => {
     console.log("user signed out");
