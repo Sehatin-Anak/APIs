@@ -32,7 +32,7 @@ exports.register = async (req, res) => {
     });
   });
 };
-
+//
 exports.login = async (req, res) => {
   
   signInWithPopup(auth, provider).then(data => {
