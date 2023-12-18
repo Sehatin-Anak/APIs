@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `child` ALTER COLUMN `tall` DROP DEFAULT,
+    ALTER COLUMN `weight` DROP DEFAULT;
