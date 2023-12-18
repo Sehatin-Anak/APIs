@@ -12,7 +12,8 @@ const authorization = async (req, res, next) => {
     }
   } catch (error) {
     return res.status(401).json({
-      error: error.message
+      errorName: error.name,
+      errorMessage: error.message
     })
   }
   

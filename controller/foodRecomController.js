@@ -77,9 +77,9 @@ exports.getRecomend = async (req, res) => {
       data: finalData,
     });
   } catch (error) {
-    console.log(error);
     res.status(400).json({
-      error: error.message,
+      errorName: error.name,
+      errorMessage: error.message
     });
   }
 };
@@ -107,9 +107,9 @@ exports.getUniqueRecom = async (req, res) => {
       data: foodRecom,
     });
   } catch (error) {
-    console.log(error);
     res.status(400).json({
-      error,
+      errorName: error.name,
+      errorMessage: error.message
     });
   }
 };

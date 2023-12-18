@@ -22,9 +22,9 @@ exports.getArticleBookmark = async (req, res) => {
       data: bookmarks,
     });
   } catch (error) {
-    console.log(error);
     res.status(400).json({
-      error,
+      errorName: error.name,
+      errorMessage: error.message
     });
   }
 };
@@ -54,9 +54,9 @@ exports.getFoodRecomBookmark = async (req, res) => {
       data: bookmarks,
     });
   } catch (error) {
-    console.log(error);
     res.status(400).json({
-      error,
+      errorName: error.name,
+      errorMessage: error.message
     });
   }
 };
@@ -83,9 +83,9 @@ exports.bookmarkArticle = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
     res.status(400).json({
-      error: error,
+      errorName: error.name,
+      errorMessage: error.message
     });
   }
 };
@@ -139,9 +139,9 @@ exports.deleteBookmarkedArticle = async (req, res) => {
       message: "Bookmark Deleted",
     });
   } catch (error) {
-    console.log(error);
     res.status(400).json({
-      error,
+      errorName: error.name,
+      errorMessage: error.message
     });
   }
 };
@@ -163,9 +163,9 @@ exports.deleteBookmarkedFoodRecom = async (req, res) => {
       message: "Bookmark Deleted",
     });
   } catch (error) {
-    console.log(error);
     res.status(400).json({
-      error,
+      errorName: error.name,
+      errorMessage: error.message
     });
   }
 };

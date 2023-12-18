@@ -13,9 +13,9 @@ exports.getAllArticle = async (req, res) => {
       data: articles,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
-      error: error,
+      errorName: error.name,
+      errorMessage: error.message,
     });
   }
 };
@@ -37,39 +37,9 @@ exports.getUniqueArticle = async (req, res) => {
       data: article,
     });
   } catch (error) {
-    console.log(error);
     res.status(400).json({
-      error,
+      errorName: error.name,
+      errorMessage: error.message,
     });
   }
 };
-
-// exports.createArticle = async (req, res) => {
-//   const data = articleDatas;
-//   const created = [];
-
-//   try {
-//     for (let i = 0; i < data.length; i++) {
-//       const article = await prisma.article.create({
-//         data: {
-//           ...data[i].article,
-//           author: {
-//             create: data[i].author,
-//           },
-//         },
-//         include: {
-//           author: true,
-//         },
-//       });
-//       created.push(article);
-//     }
-
-//     res.status(200).json({
-//       data: created,
-//     });
-//   } catch (error) {
-//     res.status(400).json({
-//       error: error.message,
-//     });
-//   }
-// };

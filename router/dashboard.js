@@ -19,8 +19,6 @@ router.get("/dashboard/article", authorization, getAllArticle);
 
 router.get("/dashboard/article/:id", authorization, getUniqueArticle);
 
-// router.post("/dashboard/article/create", authorization, createArticle);
-
 router.get("/dashboard/search", authorization, search);
 
 module.exports = router;
