@@ -1,77 +1,75 @@
 const { PrismaClient } = require("@prisma/client");
-const { articleDatas } = require("../utils/utils");
-const prisma = new PrismaClient
+const prisma = new PrismaClient();
 
 exports.getAllArticle = async (req, res) => {
-    try {
-        const articles = await prisma.article.findMany({
-            include: {
-                author: true
-            }
-        })
-        
-        res.status(200).json({
-            data: articles
-        })
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({
-            error: error
-        })
-    }
-}
+  try {
+    const articles = await prisma.article.findMany({
+      include: {
+        author: true,
+      },
+    });
+
+    res.status(200).json({
+      data: articles,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: error,
+    });
+  }
+};
 
 exports.getUniqueArticle = async (req, res) => {
-    const id = parseInt(req.params.id)
+  const id = parseInt(req.params.id);
 
-    try {
-        const article = await prisma.article.findUnique({
-            where: {
-                id
-            }, 
-            include: {
-                author: true
-            }
-        })
+  try {
+    const article = await prisma.article.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        author: true,
+      },
+    });
 
-        res.status(200).json({
-            data: article
-        })
-    } catch (error) {
-        console.log(error)
-        res.status(400).json({ 
-            error
-        })
-    }
+    res.status(200).json({
+      data: article,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      error,
+    });
+  }
+};
 
-}
+// exports.createArticle = async (req, res) => {
+//   const data = articleDatas;
+//   const created = [];
 
-exports.createArticle = async (req, res) => {
-    const data = articleDatas
-    const created = []
+//   try {
+//     for (let i = 0; i < data.length; i++) {
+//       const article = await prisma.article.create({
+//         data: {
+//           ...data[i].article,
+//           author: {
+//             create: data[i].author,
+//           },
+//         },
+//         include: {
+//           author: true,
+//         },
+//       });
+//       created.push(article);
+//     }
 
-    try {
-        for (let i = 0; i < data.length; i++) {
-            const article = await prisma.article.create({
-                data: {
-                    ...data[i].article,
-                    author: {
-                        create: data[i].author
-                    }
-                },
-                include: {
-                    author: true
-                }
-            })        
-            created.push(article)    
-        }
-
-        res.status(200).json({
-            data: created
-        })
-    } catch (error) {
-        res.status(400).json({
-            error: error.message
-        })
-    }
-}
+//     res.status(200).json({
+//       data: created,
+//     });
+//   } catch (error) {
+//     res.status(400).json({
+//       error: error.message,
+//     });
+//   }
+// };

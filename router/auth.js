@@ -1,18 +1,12 @@
-// 
-// *****Code ini buat percobaan jwt aja*****
-// *****Implementasi authnya tetep pake firebase*****
-// 
-
-const express = require('express')
-const router = express.Router()
-const auth = require('../controller/authController')
+require("dotenv").config();
+const express = require("express");
+const router = express.Router();
+const auth = require("../controller/authController");
 
 // Route for authentication
 
-router.post('/register', auth.register)
+router.get("/auth/google", auth);
 
-router.get('/login', auth.login)
+// router.get("/auth/google/callback", auth.googleAuthCallback);
 
-router.get('/logout', auth.logout)
-
-module.exports = router
+module.exports = router;

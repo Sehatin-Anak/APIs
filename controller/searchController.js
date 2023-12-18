@@ -1,18 +1,11 @@
 const { PrismaClient } = require("@prisma/client");
-const { seraching } = require("../utils/utils");
+const { searchingFoodRecom, searchingArticle } = require("../utils/utils");
 const prisma = new PrismaClient();
 
 const search = async (req, res) => {
   const search = req.query.search || "";
-  const words = search.split(" ");
 
   try {
-    // const child = await prisma.child.findFirst({
-    //   where: {
-    //     tokenId,
-    //   },
-    // });
-
     const foodRecom = await prisma.foodRecom.findMany({
       include: {
         nutritionInfo: true,
@@ -27,8 +20,8 @@ const search = async (req, res) => {
       },
     });
 
-    const foodRecomResult = seraching(foodRecom, search)
-    const articleResult = seraching(articles, search)
+    const foodRecomResult = searchingFoodRecom(foodRecom, search)
+    const articleResult = searchingArticle(articles, search)
 
     res.status(200).json({
       data: {
@@ -38,7 +31,7 @@ const search = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    req.status(400).json({
+    res.status(400).json({
       error: error,
     });
   }

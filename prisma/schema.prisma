@@ -9,20 +9,24 @@ datasource db {
 }
 
 model user {
-  id           Int      @id @default(autoincrement())
-  username     String   @unique
-  password     String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  refreshToken String?  @unique
+  id        String         @id
+  email     String         @unique
+  name      String
+  img       String
+  child     Child? 
+  bookmark  UserBookmark[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
 model Child {
   id          Int         @id @default(autoincrement())
-  tokenId     String
   name        String
   age         Int
-  gender      String
+  weight      Int
+  tall        Int
+  userId      String? @unique
+  user        user?       @relation(fields: [userId], references: [id])
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   ageCategory Int?
@@ -62,8 +66,6 @@ model NutritionInfo {
   fiber         Float
   sugar         Float
   protein       Float
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
   foodRecom     FoodRecom?
 }
 
@@ -72,8 +74,6 @@ model FoodRecomIngredient {
   ingredient  String
   foodRecomId Int
   foodRecom   FoodRecom @relation(fields: [foodRecomId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 
   @@id([id, ingredient])
   @@fulltext([ingredient])
@@ -85,8 +85,6 @@ model FoodRecomInstruction {
   instruction String    @db.VarChar(2000)
   foodRecomId Int
   foodRecom   FoodRecom @relation(fields: [foodRecomId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 
   @@id([id, stepOrder])
   @@fulltext([instruction])
@@ -115,7 +113,8 @@ model Author {
 
 model UserBookmark {
   id          Int        @id @default(autoincrement())
-  userToken   String
+  userId      String?
+  user        user?      @relation(fields: [userId], references: [id])
   foodRecomId Int?
   articleId   Int?
   foodRecom   FoodRecom? @relation(fields: [foodRecomId], references: [id])
@@ -123,6 +122,6 @@ model UserBookmark {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
-  @@unique([userToken, foodRecomId], name: "User_FoodRecom_Unique")
-  @@unique([userToken, articleId], name: "User_Article_Unique")
+  @@unique([userId, foodRecomId], name: "User_FoodRecom_Unique")
+  @@unique([userId, articleId], name: "User_Article_Unique")
 }

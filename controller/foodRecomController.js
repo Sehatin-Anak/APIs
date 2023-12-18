@@ -1,42 +1,34 @@
 const { PrismaClient } = require("@prisma/client");
 const { paginateFoodRecom, datafromML} = require("../utils/utils");
 const prisma = new PrismaClient();
-const fs = require("fs/promises");
 
 exports.getRecomend = async (req, res) => {
   const pagination = req.query.pagination;
-  const ageCategory = parseInt(req.query.ageCategory);
+  const userId = req.params.userId
   let finalData;
 
   try {
-    const child = await prisma.child.findFirst({
-      where: { tokenId: req.query.tokenId },
-      include: {
-        foodRecom: {
-          where: {
-            ageCategory: ageCategory || null
-          },
-          include: {
-            nutritionInfo: true,
-            Ingredients: true,
-            Instructions: {
-              orderBy: {
-                stepOrder: "asc",
-              },
-            },
-          },
-        },
-      },
+    const child = await prisma.child.findUnique({
+      where: { userId }
     });
 
-    // pass ageCategory to API ML (make external request using axios)
-    // store response from ML to database and then front end?
-    
-    // **** GET RECIPE DATA FROM FOODRECOM TO CHECK,
-    // **** IF USER GET FOODRECOM FOR FIRST TIME, INSERT DATA RECIPE FROM ML TO DB
-    // **** ELSE RETRIEVE DATA FROM FOODRECOM TABLE
+    const foodrecom = await prisma.foodRecom.findMany({
+      where: {
+        childId: child.id,
+        ageCategory: child.ageCategory
+      },
+      include: {
+        nutritionInfo: true,
+        Ingredients: true,
+        Instructions: {
+          orderBy: {
+            stepOrder: 'asc'
+          }
+        }
+      }
+    })
 
-    if (child.foodRecom.length === 0) {
+    if (foodrecom.length === 0) {
       const datas = await datafromML(child.ageCategory || null)
       const created = [];
       
@@ -44,7 +36,7 @@ exports.getRecomend = async (req, res) => {
         const create = await prisma.foodRecom.create({
           data: {
             ...datas[i].foodRecom,
-            ageCategory: ageCategory || null,
+            ageCategory: child.ageCategory || null,
             nutritionInfo: {
               create: datas[i].nutritionInfo,
             },
@@ -79,8 +71,7 @@ exports.getRecomend = async (req, res) => {
         data: finalData,
       });
     }
-
-    finalData = paginateFoodRecom(child.foodRecom, pagination);
+    finalData = paginateFoodRecom(foodrecom, pagination);
 
     res.status(200).json({
       data: finalData,

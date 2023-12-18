@@ -2,11 +2,11 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 exports.getArticleBookmark = async (req, res) => {
-  const tokenId = req.query.tokenId;
+  const userId = req.params.id;
   try {
     const bookmarks = await prisma.userBookmark.findMany({
       where: {
-        userToken: tokenId,
+        userId,
         NOT: {
           articleId: {
             equals: null,
@@ -29,12 +29,12 @@ exports.getArticleBookmark = async (req, res) => {
   }
 };
 
-exports.getRecipeBookmark = async (req, res) => {        
-  const tokenId = req.query.tokenId;
+exports.getFoodRecomBookmark = async (req, res) => {        
+  const userId = req.params.id;
   try {
     const bookmarks = await prisma.userBookmark.findMany({
       where: {
-        userToken: tokenId,
+        userId,
         NOT: {
           foodRecomId: {
             equals: null,
@@ -42,7 +42,11 @@ exports.getRecipeBookmark = async (req, res) => {
         },
       },
       include: {
-        foodRecom: true,
+        foodRecom: {
+          include: {
+            nutritionInfo: true
+          }
+        },
       },
     });
 
@@ -58,20 +62,20 @@ exports.getRecipeBookmark = async (req, res) => {
 };
 
 exports.bookmarkArticle = async (req, res) => {
-  const tokenId= req.query.tokenId;
+  const userId = req.params.userId;
   const id = parseInt(req.params.id);
-
+  
   try {
     const bookmark = await prisma.userBookmark.create({
       data: {
-        userToken: tokenId,
+        userId,
         articleId: id,
       },
       include: {
         article: true
       }
     });
-
+    
     res.status(200).json({
       message: "Bookmark Created",
       data: {
@@ -87,15 +91,24 @@ exports.bookmarkArticle = async (req, res) => {
 };
 
 exports.bookmarkFoodRecom = async (req, res) => {
-  const tokenId = req.query.tokenId;
+  const userId = req.params.userId;
   const id = parseInt(req.params.id);
-
+  
   try {
     const bookmark = await prisma.userBookmark.create({
       data: {
-        userToken: tokenId,
+        userId,
         foodRecomId: id,
       },
+      include: {
+        foodRecom: {
+          include: {
+            nutritionInfo: true,
+            // Ingredients: true,
+            // Instructions: true
+          }
+        }
+      }
     });
 
     res.status(200).json({
@@ -108,15 +121,20 @@ exports.bookmarkFoodRecom = async (req, res) => {
   }
 };
 
-exports.deleteBookmark = async (req, res) => {
-  const id = parseInt(req.params.id);
+exports.deleteBookmarkedArticle = async (req, res) => {
+  const userId = req.params.userId;
+  const articleId = parseInt(req.params.id)
+
   try {
     await prisma.userBookmark.delete({
       where: {
-        id,
+        User_Article_Unique: {
+          userId,
+          articleId
+        }
       },
     });
-
+    
     res.status(200).json({
       message: "Bookmark Deleted",
     });
@@ -126,11 +144,28 @@ exports.deleteBookmark = async (req, res) => {
       error,
     });
   }
-  // Code delete bookmark
-  //
-  // flow:
-  // user delete article/foodrecom dari bookmark
-  // -> delete table bookmark where id: req.params.id
-  //
-  // ## gw pake prisma (ORM), cara2 delete table nya liat di prisma documentation ##
+};
+exports.deleteBookmarkedFoodRecom = async (req, res) => {
+  const userId = req.params.userId;
+  const foodRecomId = parseInt(req.params.id)
+  
+  try {
+    await prisma.userBookmark.delete({
+      where: {
+        User_FoodRecom_Unique: {
+          userId,
+          foodRecomId
+        }
+      },
+    });
+    
+    res.status(200).json({
+      message: "Bookmark Deleted",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      error,
+    });
+  }
 };
