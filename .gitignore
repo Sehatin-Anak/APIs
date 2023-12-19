@@ -1,4 +1,2 @@
 node_modules
 .env
-firebase/auth.js
-firebase/config.js
