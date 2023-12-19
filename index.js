@@ -2,8 +2,8 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const port = 3000
-//const host = process.env.HOST
+const port = process.env.PORT
+const host = process.env.HOST
 const authRouter = require('./router/auth')
 const dashboardRouter = require('./router/dashboard')
 const childBioRouter = require('./router/childBio')
@@ -20,7 +20,7 @@ app.use('/', childBioRouter)
 app.use('/', bookmarkRouter)
 
 
-app.listen(port, () => {
+app.listen(port, host, () => {
     console.log(`Server running on port ${port}`)
 })
 
