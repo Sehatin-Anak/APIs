@@ -6,8 +6,7 @@ COPY package* .
 
 RUN npm i
 
-RUN npx prisma generate
 
 COPY . .
-
+RUN npx prisma generate
 CMD ["node","index.js"]
