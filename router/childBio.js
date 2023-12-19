@@ -11,6 +11,6 @@ router.get("/user/:userId/bioChild", authorization, getChild);
 
 router.post("/user/:userId/bioChild", authorization, create);
 
-router.put("/user/:userId/bioChild/:childId", authorization, update);
+router.put("/user/:userId/bioChild", authorization, update);
 
 module.exports = router;
