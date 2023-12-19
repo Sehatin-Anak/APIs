@@ -1,0 +1,128 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id        String         @id
+  email     String         @unique
+  name      String
+  img       String
+  child     Child? 
+  bookmark  UserBookmark[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model Child {
+  id          Int         @id @default(autoincrement())
+  name        String
+  age         Int
+  weight      Int
+  tall        Int
+  userId      String? @unique
+  user        user?       @relation(fields: [userId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  ageCategory Int?
+  foodRecom   FoodRecom[]
+}
+
+model FoodRecom {
+  id              Int                    @id @default(autoincrement())
+  ageCategory     Int?
+  name            String
+  description     String                 @db.VarChar(1000)
+  img             String
+  Category        String
+  agregateRating  Float
+  reviewCount     Int
+  nutritionInfoId Int?                   @unique
+  childId         Int
+  nutritionInfo   NutritionInfo?         @relation(fields: [nutritionInfoId], references: [id])
+  child           Child                  @relation(fields: [childId], references: [id])
+  Ingredients     FoodRecomIngredient[]
+  Instructions    FoodRecomInstruction[]
+  bookmark        UserBookmark[]
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  @@fulltext([name, description, Category])
+}
+
+model NutritionInfo {
+  id            Int        @id @default(autoincrement())
+  calories      Float
+  fat           Float
+  saturatedFat  Float
+  cholesterol   Float
+  sodium        Float
+  carbohydrates Float
+  fiber         Float
+  sugar         Float
+  protein       Float
+  foodRecom     FoodRecom?
+}
+
+model FoodRecomIngredient {
+  id          Int       @default(autoincrement())
+  ingredient  String
+  foodRecomId Int
+  foodRecom   FoodRecom @relation(fields: [foodRecomId], references: [id])
+
+  @@id([id, ingredient])
+  @@fulltext([ingredient])
+}
+
+model FoodRecomInstruction {
+  id          Int       @default(autoincrement())
+  stepOrder   Int
+  instruction String    @db.VarChar(2000)
+  foodRecomId Int
+  foodRecom   FoodRecom @relation(fields: [foodRecomId], references: [id])
+
+  @@id([id, stepOrder])
+  @@fulltext([instruction])
+}
+
+model Article {
+  id              Int            @id @default(autoincrement())
+  author          Author[]
+  publicationDate String
+  title           String
+  url             String
+  content         String         @db.VarChar(5000)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  bookmark        UserBookmark[]
+
+  @@fulltext([title, content])
+}
+
+model Author {
+  id        Int     @id @default(autoincrement())
+  name      String
+  articleId Int
+  article   Article @relation(fields: [articleId], references: [id])
+}
+
+model UserBookmark {
+  id          Int        @id @default(autoincrement())
+  userId      String?
+  user        user?      @relation(fields: [userId], references: [id])
+  foodRecomId Int?
+  articleId   Int?
+  foodRecom   FoodRecom? @relation(fields: [foodRecomId], references: [id])
+  article     Article?   @relation(fields: [articleId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([userId, foodRecomId], name: "User_FoodRecom_Unique")
+  @@unique([userId, articleId], name: "User_Article_Unique")
+}
