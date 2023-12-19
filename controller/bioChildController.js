@@ -1,3 +1,4 @@
+
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
@@ -64,7 +65,6 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   const userId = req.params.userId;
-  const childId = parseInt(req.params.childId);
   const data = {
     name: req.body.name,
     age: req.body.age,
@@ -74,23 +74,11 @@ exports.update = async (req, res) => {
   };
 
   try {
-    const update = await prisma.user.update({
+    const update = await prisma.child.update({
       where: {
-        id: userId,
+        userId,
       },
-      data: {
-        child: {
-          update: {
-            where: {
-              id: childId,
-            },
-            data,
-          },
-        },
-      },
-      include: {
-        child: true
-      }
+      data,
     });
 
     res.status(200).json({

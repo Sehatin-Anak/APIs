@@ -1,6 +1,6 @@
 FROM node:18
 
-WORKDIR back/
+WORKDIR app/
 
 COPY package* .
 
