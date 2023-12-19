@@ -3,14 +3,17 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client();
-// const { google } = require("googleapis");
 
 const verifyUser = async (req, res) => {
-  const tokenId = req.qeury.tokenId;
+  const idToken = req.headers.idtoken;
 
   try {
+    if (!idToken) {
+      throw new Error('Missing required header: idToken')  
+    }
+
     const ticket = client.verifyIdToken({
-      idToken: tokenId,
+      idToken: idToken,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
 
@@ -42,7 +45,9 @@ const verifyUser = async (req, res) => {
       message: `Welcome ${newUser.name}`,
       user: newUser,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+  }
 };
 
 module.exports = verifyUser
