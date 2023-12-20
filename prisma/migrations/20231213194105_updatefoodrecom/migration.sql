@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `foodrecom` ADD COLUMN `ageCategory` INTEGER NULL;
+ALTER TABLE `FoodRecom` ADD COLUMN `ageCategory` INTEGER NULL;

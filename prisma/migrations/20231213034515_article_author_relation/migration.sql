@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE `article` DROP COLUMN `author`;
+ALTER TABLE `Article` DROP COLUMN `author`;
 
 -- CreateTable
 CREATE TABLE `Author` (

@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `child` MODIFY `ageCategory` INTEGER NULL;
+-- ALTER TABLE `Child` MODIFY `ageCategory` INTEGER NULL;

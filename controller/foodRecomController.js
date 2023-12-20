@@ -12,7 +12,7 @@ exports.getRecomend = async (req, res) => {
       where: { userId }
     });
 
-    const foodrecom = await prisma.foodRecom.findMany({
+    const foodRecom = await prisma.foodRecom.findMany({
       where: {
         childId: child.id,
         ageCategory: child.ageCategory
@@ -28,7 +28,7 @@ exports.getRecomend = async (req, res) => {
       }
     })
 
-    if (foodrecom.length === 0) {
+    if (foodRecom.length === 0) {
       const datas = await datafromML(child.ageCategory || null)
       const created = [];
       
@@ -71,7 +71,7 @@ exports.getRecomend = async (req, res) => {
         data: finalData,
       });
     }
-    finalData = paginateFoodRecom(foodrecom, pagination);
+    finalData = paginateFoodRecom(foodRecom, pagination);
 
     res.status(200).json({
       data: finalData,

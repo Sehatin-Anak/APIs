@@ -5,6 +5,6 @@
 
 */
 -- AlterTable
-ALTER TABLE `child` DROP COLUMN `gender`,
+ALTER TABLE `Child` DROP COLUMN `gender`,
     ADD COLUMN `tall` INTEGER NOT NULL DEFAULT 100,
     ADD COLUMN `weight` INTEGER NOT NULL DEFAULT 20;

@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `article` MODIFY `content` VARCHAR(5000) NOT NULL;
+ALTER TABLE `Article` MODIFY `content` VARCHAR(5000) NOT NULL;

@@ -7,13 +7,13 @@
 
 */
 -- DropIndex
-DROP INDEX `UserBookmark_userToken_articleId_key` ON `userbookmark`;
+DROP INDEX `UserBookmark_userToken_articleId_key` ON `UserBookmark`;
 
 -- DropIndex
-DROP INDEX `UserBookmark_userToken_foodRecomId_key` ON `userbookmark`;
+DROP INDEX `UserBookmark_userToken_foodRecomId_key` ON `UserBookmark`;
 
 -- AlterTable
-ALTER TABLE `userbookmark` DROP COLUMN `userToken`,
+ALTER TABLE `UserBookmark` DROP COLUMN `userToken`,
     ADD COLUMN `userId` VARCHAR(191) NULL;
 
 -- CreateIndex

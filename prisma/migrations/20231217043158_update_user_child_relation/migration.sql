@@ -12,7 +12,7 @@
 DROP INDEX `user_username_key` ON `user`;
 
 -- AlterTable
-ALTER TABLE `child` DROP COLUMN `tokenId`;
+ALTER TABLE `Child` DROP COLUMN `tokenId`;
 
 -- AlterTable
 ALTER TABLE `user` DROP PRIMARY KEY,

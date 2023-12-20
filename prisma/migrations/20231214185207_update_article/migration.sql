@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE `article` ADD COLUMN `url` VARCHAR(191) NOT NULL;
+ALTER TABLE `Article` ADD COLUMN `url` VARCHAR(191) NOT NULL;

@@ -14,13 +14,13 @@
 
 */
 -- DropIndex
-DROP INDEX `NutritionInfo_calories_fat_saturatedFat_cholesterol_sodium_c_idx` ON `nutritioninfo`;
+DROP INDEX `NutritionInfo_calories_fat_saturatedFat_cholesterol_sodium_c_idx` ON `NutritionInfo`;
 
 -- AlterTable
-ALTER TABLE `foodrecomingredient` DROP COLUMN `qty`;
+ALTER TABLE `FoodRecomIngredient` DROP COLUMN `qty`;
 
 -- AlterTable
-ALTER TABLE `nutritioninfo` MODIFY `calories` DOUBLE NOT NULL,
+ALTER TABLE `NutritionInfo` MODIFY `calories` DOUBLE NOT NULL,
     MODIFY `fat` DOUBLE NOT NULL,
     MODIFY `saturatedFat` DOUBLE NOT NULL,
     MODIFY `cholesterol` DOUBLE NOT NULL,
