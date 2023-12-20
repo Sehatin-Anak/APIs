@@ -8,6 +8,7 @@ const authorization = async (req, res, next) => {
     if (!apiKey) {
       throw new Error('Missing required header: Authorization')
     }
+    
     const key = apiKey.split(' ')[1]
 
     if (!key || !authKey.includes(key)) {

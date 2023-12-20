@@ -38,6 +38,16 @@ exports.create = async (req, res) => {
   };
 
   try {
+    // const existChild = await prisma.child.findUnique({
+    //   where: {
+    //     userId: id
+    //   }
+    // })
+    
+    // if (existChild) {
+    //   throw new Error('This User is allready has child')
+    // }
+
     const child = await prisma.child.create({
       data: {
         ...data,
