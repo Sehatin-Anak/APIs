@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE `foodrecom` ADD COLUMN `childId` INTEGER NOT NULL;
+ALTER TABLE `FoodRecom` ADD COLUMN `childId` INTEGER NOT NULL;
 
 -- AddForeignKey
 ALTER TABLE `FoodRecom` ADD CONSTRAINT `FoodRecom_childId_fkey` FOREIGN KEY (`childId`) REFERENCES `Child`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

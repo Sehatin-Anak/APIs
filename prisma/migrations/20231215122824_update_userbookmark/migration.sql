@@ -6,7 +6,7 @@
 
 */
 -- DropIndex
-DROP INDEX `UserBookmark_articleId_foodRecomId_key` ON `userbookmark`;
+DROP INDEX `UserBookmark_articleId_foodRecomId_key` ON `UserBookmark`;
 
 -- CreateIndex
 CREATE UNIQUE INDEX `UserBookmark_userToken_foodRecomId_key` ON `UserBookmark`(`userToken`, `foodRecomId`);

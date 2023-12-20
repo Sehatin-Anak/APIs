@@ -6,5 +6,5 @@
 
 */
 -- AlterTable
-ALTER TABLE `article` DROP COLUMN `year`,
+ALTER TABLE `Article` DROP COLUMN `year`,
     ADD COLUMN `publicationDate` VARCHAR(191) NOT NULL;

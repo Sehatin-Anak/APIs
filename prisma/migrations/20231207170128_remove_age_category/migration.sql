@@ -7,11 +7,11 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `child` DROP FOREIGN KEY `Child_ageCategoryId_fkey`;
+-- ALTER TABLE `Child` DROP FOREIGN KEY `Child_ageCategoryId_fkey`;
 
 -- AlterTable
-ALTER TABLE `child` DROP COLUMN `ageCategoryId`,
-    ADD COLUMN `ageCategory` INTEGER NOT NULL;
+-- ALTER TABLE `Child` DROP COLUMN `ageCategoryId`,
+--     ADD COLUMN `ageCategory` INTEGER NOT NULL;
 
 -- DropTable
-DROP TABLE `agecategory`;
+-- DROP TABLE `agecategory`;

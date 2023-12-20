@@ -10,13 +10,13 @@
 
 */
 -- AlterTable
-ALTER TABLE `foodrecomingredient` DROP COLUMN `createdAt`,
+ALTER TABLE `FoodRecomIngredient` DROP COLUMN `createdAt`,
     DROP COLUMN `updatedAt`;
 
 -- AlterTable
-ALTER TABLE `foodrecominstruction` DROP COLUMN `createdAt`,
+ALTER TABLE `FoodRecomInstruction` DROP COLUMN `createdAt`,
     DROP COLUMN `updatedAt`;
 
 -- AlterTable
-ALTER TABLE `nutritioninfo` DROP COLUMN `createdAt`,
+ALTER TABLE `NutritionInfo` DROP COLUMN `createdAt`,
     DROP COLUMN `updatedAt`;

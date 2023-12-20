@@ -8,7 +8,7 @@
 ALTER TABLE `user` DROP FOREIGN KEY `user_childId_fkey`;
 
 -- AlterTable
-ALTER TABLE `child` ADD COLUMN `userId` VARCHAR(191) NULL;
+ALTER TABLE `Child` ADD COLUMN `userId` VARCHAR(191) NULL;
 
 -- AlterTable
 ALTER TABLE `user` DROP COLUMN `childId`;

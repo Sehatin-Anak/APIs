@@ -7,19 +7,19 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `fruit` DROP FOREIGN KEY `Fruit_foodRecomId_fkey`;
+-- ALTER TABLE `fruit` DROP FOREIGN KEY `Fruit_foodRecomId_fkey`;
 
--- DropForeignKey
-ALTER TABLE `snack` DROP FOREIGN KEY `Snack_foodRecomId_fkey`;
+-- -- DropForeignKey
+-- ALTER TABLE `snack` DROP FOREIGN KEY `Snack_foodRecomId_fkey`;
 
--- DropForeignKey
-ALTER TABLE `vegetable` DROP FOREIGN KEY `Vegetable_foodRecomId_fkey`;
+-- -- DropForeignKey
+-- ALTER TABLE `vegetable` DROP FOREIGN KEY `Vegetable_foodRecomId_fkey`;
 
--- DropTable
-DROP TABLE `fruit`;
+-- -- DropTable
+-- DROP TABLE `fruit`;
 
--- DropTable
-DROP TABLE `snack`;
+-- -- DropTable
+-- DROP TABLE `snack`;
 
--- DropTable
-DROP TABLE `vegetable`;
+-- -- DropTable
+-- DROP TABLE `vegetable`;

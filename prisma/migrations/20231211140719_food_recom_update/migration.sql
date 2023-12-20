@@ -15,19 +15,19 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `recipe` DROP FOREIGN KEY `Recipe_foodRecomId_fkey`;
+-- ALTER TABLE `recipe` DROP FOREIGN KEY `Recipe_foodRecomId_fkey`;
+
+-- -- DropForeignKey
+-- ALTER TABLE `recipe` DROP FOREIGN KEY `Recipe_nutritionInfoId_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `recipe` DROP FOREIGN KEY `Recipe_nutritionInfoId_fkey`;
+-- ALTER TABLE `recipeingredient` DROP FOREIGN KEY `RecipeIngredient_recipeId_fkey`;
 
--- DropForeignKey
-ALTER TABLE `recipeingredient` DROP FOREIGN KEY `RecipeIngredient_recipeId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `recipeinstruction` DROP FOREIGN KEY `RecipeInstruction_recipeId_fkey`;
+-- -- DropForeignKey
+-- ALTER TABLE `recipeinstruction` DROP FOREIGN KEY `RecipeInstruction_recipeId_fkey`;
 
 -- AlterTable
-ALTER TABLE `foodrecom` ADD COLUMN `Category` VARCHAR(191) NOT NULL,
+ALTER TABLE `FoodRecom` ADD COLUMN `Category` VARCHAR(191) NOT NULL,
     ADD COLUMN `agregateRating` DOUBLE NOT NULL,
     ADD COLUMN `description` VARCHAR(1000) NOT NULL,
     ADD COLUMN `img` VARCHAR(191) NOT NULL,
@@ -35,14 +35,14 @@ ALTER TABLE `foodrecom` ADD COLUMN `Category` VARCHAR(191) NOT NULL,
     ADD COLUMN `nutritionInfoId` INTEGER NOT NULL,
     ADD COLUMN `reviewCount` INTEGER NOT NULL;
 
--- DropTable
-DROP TABLE `recipe`;
+-- -- DropTable
+-- DROP TABLE `recipe`;
 
--- DropTable
-DROP TABLE `recipeingredient`;
+-- -- DropTable
+-- DROP TABLE `recipeingredient`;
 
--- DropTable
-DROP TABLE `recipeinstruction`;
+-- -- DropTable
+-- DROP TABLE `recipeinstruction`;
 
 -- CreateTable
 CREATE TABLE `FoodRecomIngredient` (

@@ -5,10 +5,10 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `child` DROP FOREIGN KEY `Child_userId_fkey`;
+ALTER TABLE `Child` DROP FOREIGN KEY `Child_userId_fkey`;
 
 -- AlterTable
-ALTER TABLE `child` MODIFY `userId` VARCHAR(191) NOT NULL;
+ALTER TABLE `Child` MODIFY `userId` VARCHAR(191) NOT NULL;
 
 -- AddForeignKey
 ALTER TABLE `Child` ADD CONSTRAINT `Child_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -8,7 +8,7 @@
 
 */
 -- AlterTable
-ALTER TABLE `foodrecom` DROP COLUMN `description`,
+ALTER TABLE `FoodRecom` DROP COLUMN `description`,
     DROP COLUMN `img`,
     DROP COLUMN `name`,
     DROP COLUMN `nutritionInfo`;

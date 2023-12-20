@@ -9,21 +9,21 @@
 
 */
 -- DropIndex
-DROP INDEX `FoodRecomIngredient_ingredient_quality_idx` ON `foodrecomingredient`;
+DROP INDEX `FoodRecomIngredient_ingredient_quality_idx` ON `FoodRecomIngredient`;
 
 -- AlterTable
-ALTER TABLE `foodrecomingredient` DROP COLUMN `quality`,
+ALTER TABLE `FoodRecomIngredient` DROP COLUMN `quality`,
     ADD COLUMN `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     ADD COLUMN `qty` INTEGER NOT NULL,
     ADD COLUMN `updatedAt` DATETIME(3) NOT NULL;
 
 -- AlterTable
-ALTER TABLE `foodrecominstruction` ADD COLUMN `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+ALTER TABLE `FoodRecomInstruction` ADD COLUMN `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     ADD COLUMN `updatedAt` DATETIME(3) NOT NULL,
     MODIFY `instruction` VARCHAR(2000) NOT NULL;
 
 -- AlterTable
-ALTER TABLE `nutritioninfo` ADD COLUMN `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+ALTER TABLE `NutritionInfo` ADD COLUMN `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     ADD COLUMN `updatedAt` DATETIME(3) NOT NULL;
 
 -- CreateIndex
