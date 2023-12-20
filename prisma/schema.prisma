@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  previewFeatures = ["fullTextIndex", "fullTextSearch"]
   binaryTargets   = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -10,53 +10,100 @@ datasource db {
 }
 
 model user {
-  id        String         @id
-  email     String         @unique
-  name      String
-  img       String
-  child     Child?
-  bookmark  UserBookmark[]
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  id           String         @id
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  email        String         @unique
+  img          String
+  name         String
+  child        child?
+  userbookmark userbookmark[]
 }
 
-model Child {
+model article {
+  id              Int           @id @default(autoincrement())
+  title           String
+  content         String        @db.VarChar(5000)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime
+  publicationDate String
+  url             String
+  author          author[]
+  userbookmark    userbookmark?
+
+  @@fulltext([title, content], map: "Article_title_content_idx")
+}
+
+model author {
+  id        Int     @id @default(autoincrement())
+  articleId Int
+  name      String
+  article   article @relation(fields: [articleId], references: [id], map: "Author_articleId_fkey")
+
+  @@index([articleId], map: "Author_articleId_fkey")
+}
+
+model child {
   id          Int         @id @default(autoincrement())
   name        String
   age         Int
-  weight      Int
-  tall        Int
-  userId      String     @unique
-  user        user       @relation(fields: [userId], references: [id])
   createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  updatedAt   DateTime
   ageCategory Int?
-  foodRecom   FoodRecom[]
+  tall        Int
+  weight      Int
+  userId      String?     @unique(map: "Child_userId_key")
+  user        user?       @relation(fields: [userId], references: [id], map: "Child_userId_fkey")
+  foodrecom   foodrecom[]
 }
 
-model FoodRecom {
-  id              Int                    @id @default(autoincrement())
-  ageCategory     Int?
-  name            String
-  description     String                 @db.VarChar(1000)
-  img             String
-  Category        String
-  agregateRating  Float
-  reviewCount     Int
-  nutritionInfoId Int?                   @unique
-  childId         Int
-  nutritionInfo   NutritionInfo?         @relation(fields: [nutritionInfoId], references: [id])
-  child           Child                  @relation(fields: [childId], references: [id])
-  Ingredients     FoodRecomIngredient[]
-  Instructions    FoodRecomInstruction[]
-  bookmark        UserBookmark[]
-  createdAt       DateTime               @default(now())
-  updatedAt       DateTime               @updatedAt
+model foodrecom {
+  id                   Int                    @id @default(autoincrement())
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime
+  childId              Int
+  Category             String
+  agregateRating       Float
+  description          String                 @db.VarChar(1000)
+  img                  String
+  name                 String
+  nutritionInfoId      Int?                   @unique(map: "FoodRecom_nutritionInfoId_key")
+  reviewCount          Int
+  ageCategory          Int?
+  child                child                  @relation(fields: [childId], references: [id], map: "FoodRecom_childId_fkey")
+  nutritioninfo        nutritioninfo?         @relation(fields: [nutritionInfoId], references: [id], map: "FoodRecom_nutritionInfoId_fkey")
+  foodrecomingredient  foodrecomingredient[]
+  foodrecominstruction foodrecominstruction[]
+  userbookmark         userbookmark?
 
-  @@fulltext([name, description, Category])
+  @@index([childId], map: "FoodRecom_childId_fkey")
+  @@fulltext([name, description, Category], map: "FoodRecom_name_description_Category_idx")
 }
 
-model NutritionInfo {
+model foodrecomingredient {
+  id          Int       @default(autoincrement())
+  ingredient  String
+  foodRecomId Int
+  foodrecom   foodrecom @relation(fields: [foodRecomId], references: [id], map: "FoodRecomIngredient_foodRecomId_fkey")
+
+  @@id([id, ingredient])
+  @@index([foodRecomId], map: "FoodRecomIngredient_foodRecomId_fkey")
+  @@fulltext([ingredient], map: "FoodRecomIngredient_ingredient_idx")
+}
+
+model foodrecominstruction {
+  id          Int       @default(autoincrement())
+  stepOrder   Int
+  instruction String    @db.VarChar(2000)
+  foodRecomId Int
+  foodrecom   foodrecom @relation(fields: [foodRecomId], references: [id], map: "FoodRecomInstruction_foodRecomId_fkey")
+
+  @@id([id, stepOrder])
+  @@index([foodRecomId], map: "FoodRecomInstruction_foodRecomId_fkey")
+  @@fulltext([instruction], map: "FoodRecomInstruction_instruction_idx")
+}
+
+model nutritioninfo {
   id            Int        @id @default(autoincrement())
   calories      Float
   fat           Float
@@ -67,62 +114,20 @@ model NutritionInfo {
   fiber         Float
   sugar         Float
   protein       Float
-  foodRecom     FoodRecom?
+  foodrecom     foodrecom?
 }
 
-model FoodRecomIngredient {
-  id          Int       @default(autoincrement())
-  ingredient  String
-  foodRecomId Int
-  foodRecom   FoodRecom @relation(fields: [foodRecomId], references: [id])
-
-  @@id([id, ingredient])
-  @@fulltext([ingredient])
-}
-
-model FoodRecomInstruction {
-  id          Int       @default(autoincrement())
-  stepOrder   Int
-  instruction String    @db.VarChar(2000)
-  foodRecomId Int
-  foodRecom   FoodRecom @relation(fields: [foodRecomId], references: [id])
-
-  @@id([id, stepOrder])
-  @@fulltext([instruction])
-}
-
-model Article {
-  id              Int            @id @default(autoincrement())
-  author          Author[]
-  publicationDate String
-  title           String
-  url             String
-  content         String         @db.VarChar(5000)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  bookmark        UserBookmark[]
-
-  @@fulltext([title, content])
-}
-
-model Author {
-  id        Int     @id @default(autoincrement())
-  name      String
-  articleId Int
-  article   Article @relation(fields: [articleId], references: [id])
-}
-
-model UserBookmark {
+model userbookmark {
   id          Int        @id @default(autoincrement())
-  userId      String?
-  user        user?      @relation(fields: [userId], references: [id])
-  foodRecomId Int?
-  articleId   Int?
-  foodRecom   FoodRecom? @relation(fields: [foodRecomId], references: [id])
-  article     Article?   @relation(fields: [articleId], references: [id])
+  foodRecomId Int?       @unique(map: "UserBookmark_foodRecomId_key")
+  articleId   Int?       @unique(map: "UserBookmark_articleId_key")
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  updatedAt   DateTime
+  userId      String?
+  article     article?   @relation(fields: [articleId], references: [id], map: "UserBookmark_articleId_fkey")
+  foodrecom   foodrecom? @relation(fields: [foodRecomId], references: [id], map: "UserBookmark_foodRecomId_fkey")
+  user        user?      @relation(fields: [userId], references: [id], map: "UserBookmark_userId_fkey")
 
-  @@unique([userId, foodRecomId], name: "User_FoodRecom_Unique")
-  @@unique([userId, articleId], name: "User_Article_Unique")
+  @@unique([userId, articleId], map: "UserBookmark_userId_articleId_key")
+  @@unique([userId, foodRecomId], map: "UserBookmark_userId_foodRecomId_key")
 }
