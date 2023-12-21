@@ -35,18 +35,12 @@ exports.create = async (req, res) => {
     ageCategory: req.body.ageCategory || null,
     weight: req.body.weight,
     tall: req.body.tall,
+    userId: id
   };
 
   try {
     const child = await prisma.child.create({
-      data: {
-        ...data,
-        user: {
-          connect: {
-            id,
-          },
-        },
-      },
+      data: data
     });
 
     res.status(200).json({
