@@ -1,15 +1,33 @@
 require("dotenv").config();
+const { PrismaClient } = require("@prisma/client");
 const axios = require("axios");
 const modelApiUri = `${process.env.MODEL_API_URI}/generate_json/`;
 const Fuse = require("fuse.js");
+const prisma = new PrismaClient();
+const schedule = require("node-schedule");
+let dataRecipe;
+
+const job = schedule.scheduleJob("20 * * * * *", async () => {
+  dataRecipe = await prisma.foodRecom.findMany();
+
+  for (let i = dataRecipe.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [dataRecipe[i], dataRecipe[j]] = [dataRecipe[j], dataRecipe[i]];
+  }
+
+});
+
+const getRecipe = () => {
+  return dataRecipe;
+};
 
 const searchingFoodRecom = (arr, words) => {
   const options = {
     includeScore: true,
     keys: [
-      {name: "name", weight: 2},
+      { name: "name", weight: 2 },
       "description",
-      {name: "Category", weight: 2},
+      { name: "Category", weight: 2 },
       "Ingredients.ingredient",
       "Instructions.instruction",
     ],
@@ -28,10 +46,7 @@ const searchingFoodRecom = (arr, words) => {
 const searchingArticle = (arr, words) => {
   const options = {
     includeScore: true,
-    keys: [
-      "title",
-      "content",
-    ],
+    keys: ["title", "content"],
     // threshold: 0.7,
   };
 
@@ -51,7 +66,7 @@ const datafromML = async (ageCategory) => {
         Accept: "application/json",
       },
     })
-    .then((data) => { 
+    .then((data) => {
       return data.data.recommendations;
     });
 
@@ -69,7 +84,7 @@ const datafromML = async (ageCategory) => {
         instruction: item.replace(/^"|"$/g, ""),
       };
     });
-    
+
     return {
       foodRecom: {
         name: val.Name,
@@ -98,20 +113,16 @@ const datafromML = async (ageCategory) => {
   return cleanOutput;
 };
 
-const paginateFoodRecom = (array, limit) => {
-  const shuffled = [...array];
+const paginateFoodRecom = async (childId, limit) => {
   let paginated;
-
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
+  const data = await getRecipe();
+  const recipes = data.filter((val) => val.childId === childId);
 
   if (!limit) {
-    return shuffled;
+    paginated = recipes;
+  } else {
+    paginated = recipes.slice(0, limit);
   }
-
-  paginated = shuffled.slice(0, limit);
 
   return paginated;
 };

@@ -64,14 +64,14 @@ exports.getRecomend = async (req, res) => {
         created.push(create);
       }
 
-      finalData = paginateFoodRecom(created, pagination);
+      finalData = created.slice(0, pagination)
 
       return res.status(200).json({
         message: 'Data created',
         data: finalData,
       });
     }
-    finalData = paginateFoodRecom(foodRecom, pagination);
+    finalData = await paginateFoodRecom(child.id, pagination);
 
     res.status(200).json({
       data: finalData,
