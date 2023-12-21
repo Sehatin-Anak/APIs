@@ -26,7 +26,7 @@ model Child {
   age         Int
   weight      Int
   tall        Int
-  userId      String?     @unique
+  userId      String      @unique
   user        user?       @relation(fields: [userId], references: [id])
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -38,8 +38,8 @@ model FoodRecom {
   id              Int                    @id @default(autoincrement())
   ageCategory     Int?
   name            String
-  description     String                 @db.VarChar(1000)
-  img             String                 @db.VarChar(1000)
+  description     String                 @db.VarChar(5000)
+  img             String                 @db.VarChar(2000)
   Category        String
   agregateRating  Float
   reviewCount     Int
@@ -83,7 +83,7 @@ model FoodRecomIngredient {
 model FoodRecomInstruction {
   id          Int       @default(autoincrement())
   stepOrder   Int
-  instruction String    @db.VarChar(2000)
+  instruction String    @db.VarChar(5000)
   foodRecomId Int
   foodRecom   FoodRecom @relation(fields: [foodRecomId], references: [id])
 
