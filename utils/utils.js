@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const schedule = require("node-schedule");
 let dataRecipe;
 
-const job = schedule.scheduleJob("20 * * * * *", async () => {
+const job = schedule.scheduleJob("1 12 * * * *", async () => {
   dataRecipe = await prisma.foodRecom.findMany();
 
   for (let i = dataRecipe.length - 1; i > 0; i--) {
@@ -113,10 +113,16 @@ const datafromML = async (ageCategory) => {
   return cleanOutput;
 };
 
-const paginateFoodRecom = async (childId, limit) => {
+const paginateFoodRecom = async (foodRecom, childId, ageCategory, limit) => {
   let paginated;
+  let recipes
   const data = await getRecipe();
-  const recipes = data.filter((val) => val.childId === childId);
+
+  if (!data) {
+    recipes = foodRecom
+  } else {
+    recipes = data.filter((val) => val.childId === childId && val.ageCategory === ageCategory);
+  }
 
   if (!limit) {
     paginated = recipes;
