@@ -6,6 +6,6 @@ const authorization = require("../middleware/authorization");
 
 // Route for authentication
 
-router.get("/auth/google", authorization, auth);
+router.post("/auth/google", authorization, auth);
 
 module.exports = router;
