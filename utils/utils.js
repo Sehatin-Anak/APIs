@@ -2,19 +2,18 @@ require("dotenv").config();
 const axios = require("axios");
 const modelApiUri = `${process.env.MODEL_API_URI}/generate_json/`;
 const Fuse = require("fuse.js");
-const fs = require("fs/promises");
 
 const searchingFoodRecom = (arr, words) => {
   const options = {
     includeScore: true,
     keys: [
-      "name",
+      {name: "name", weight: 2},
       "description",
-      "Category",
+      {name: "Category", weight: 2},
       "Ingredients.ingredient",
       "Instructions.instruction",
     ],
-    threshold: 0.6,
+    threshold: 0.5,
   };
 
   const myIndex = Fuse.createIndex(options.keys, arr);
