@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const schedule = require("node-schedule");
 let dataRecipe;
 
-const job = schedule.scheduleJob("1 12 * * * *", async () => {
+const job = schedule.scheduleJob("59 59 3 * * *", async () => {
   dataRecipe = await prisma.foodRecom.findMany();
 
   for (let i = dataRecipe.length - 1; i > 0; i--) {
@@ -47,7 +47,6 @@ const searchingArticle = (arr, words) => {
   const options = {
     includeScore: true,
     keys: ["title", "content"],
-    // threshold: 0.7,
   };
 
   const myIndex = Fuse.createIndex(options.keys, arr);
