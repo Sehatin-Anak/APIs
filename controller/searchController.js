@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const { searchingFoodRecom} = require("../utils/utils");
+const { searchingFoodRecom, searchingArticle } = require("../utils/utils");
 const prisma = new PrismaClient();
 
 const search = async (req, res) => {
@@ -30,7 +30,7 @@ const search = async (req, res) => {
     res.status(200).json({
       data: {
         foodRecom: foodRecomResult,
-        // articles: articleResult
+        articles: articleResult
       },
     });
   } catch (error) {
