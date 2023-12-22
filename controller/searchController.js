@@ -14,14 +14,14 @@ const search = async (req, res) => {
       },
     });
 
-    const articles = await prisma.article.findMany({
-      include: {
-        author: true,
-      },
-    });
+    // const articles = await prisma.article.findMany({
+    //   include: {
+    //     author: true,
+    //   },
+    // });
 
     const foodRecomResult = searchingFoodRecom(foodRecom, search)
-    const articleResult = searchingArticle(articles, search)
+    // const articleResult = searchingArticle(articles, search)
 
     res.status(200).json({
       data: {

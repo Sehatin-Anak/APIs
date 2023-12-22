@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const schedule = require("node-schedule");
 let dataRecipe;
 
-const job = schedule.scheduleJob("1 30 9 * * *", async () => {
+const job = schedule.scheduleJob("1 35 9 * * *", async () => {
   dataRecipe = await prisma.foodRecom.findMany();
 
   for (let i = dataRecipe.length - 1; i > 0; i--) {
@@ -43,20 +43,20 @@ const searchingFoodRecom = (arr, words) => {
   return result;
 };
 
-const searchingArticle = (arr, words) => {
-  const options = {
-    includeScore: true,
-    keys: ["title", "content"],
-  };
+// const searchingArticle = (arr, words) => {
+//   const options = {
+//     includeScore: true,
+//     keys: ["title", "content"],
+//   };
 
-  const myIndex = Fuse.createIndex(options.keys, arr);
+//   const myIndex = Fuse.createIndex(options.keys, arr);
 
-  const fuse = new Fuse(arr, options, myIndex);
+//   const fuse = new Fuse(arr, options, myIndex);
 
-  const result = fuse.search(words);
+//   const result = fuse.search(words);
 
-  return result;
-};
+//   return result;
+// };
 
 const datafromML = async (ageCategory) => {
   const mlApiResponse = await axios
@@ -136,5 +136,4 @@ module.exports = {
   paginateFoodRecom,
   datafromML,
   searchingFoodRecom,
-  searchingArticle,
 };
