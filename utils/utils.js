@@ -1,19 +1,36 @@
 require("dotenv").config();
+const { PrismaClient } = require("@prisma/client");
 const axios = require("axios");
 const modelApiUri = `${process.env.MODEL_API_URI}/generate_json/`;
 const Fuse = require("fuse.js");
+const prisma = new PrismaClient();
+const schedule = require("node-schedule");
+let dataRecipe;
+
+const job = schedule.scheduleJob("0 0 21 * * *", async () => {
+  dataRecipe = await prisma.foodRecom.findMany();
+
+  for (let i = dataRecipe.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [dataRecipe[i], dataRecipe[j]] = [dataRecipe[j], dataRecipe[i]];
+  }
+
+});
+
+const getRecipe = () => {
+  return dataRecipe;
+};
 
 const searchingFoodRecom = (arr, words) => {
   const options = {
     includeScore: true,
     keys: [
-      {name: "name", weight: 2},
+      { name: "name", weight: 2 },
       "description",
-      {name: "Category", weight: 2},
+      { name: "Category", weight: 2 },
       "Ingredients.ingredient",
       "Instructions.instruction",
     ],
-    threshold: 0.5,
   };
 
   const myIndex = Fuse.createIndex(options.keys, arr);
@@ -25,24 +42,20 @@ const searchingFoodRecom = (arr, words) => {
   return result;
 };
 
-const searchingArticle = (arr, words) => {
-  const options = {
-    includeScore: true,
-    keys: [
-      "title",
-      "content",
-    ],
-    // threshold: 0.7,
-  };
+// const searchingArticle = (arr, words) => {
+//   const options = {
+//     includeScore: true,
+//     keys: ["title", "content"],
+//   };
 
-  const myIndex = Fuse.createIndex(options.keys, arr);
+//   const myIndex = Fuse.createIndex(options.keys, arr);
 
-  const fuse = new Fuse(arr, options, myIndex);
+//   const fuse = new Fuse(arr, options, myIndex);
 
-  const result = fuse.search(words);
+//   const result = fuse.search(words);
 
-  return result;
-};
+//   return result;
+// };
 
 const datafromML = async (ageCategory) => {
   const mlApiResponse = await axios
@@ -51,7 +64,7 @@ const datafromML = async (ageCategory) => {
         Accept: "application/json",
       },
     })
-    .then((data) => { 
+    .then((data) => {
       return data.data.recommendations;
     });
 
@@ -69,7 +82,7 @@ const datafromML = async (ageCategory) => {
         instruction: item.replace(/^"|"$/g, ""),
       };
     });
-    
+
     return {
       foodRecom: {
         name: val.Name,
@@ -98,20 +111,22 @@ const datafromML = async (ageCategory) => {
   return cleanOutput;
 };
 
-const paginateFoodRecom = (array, limit) => {
-  const shuffled = [...array];
+const paginateFoodRecom = async (foodRecom, childId, ageCategory, limit) => {
   let paginated;
+  let recipes
+  const data = await getRecipe();
 
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  if (!data) {
+    recipes = foodRecom
+  } else {
+    recipes = data.filter((val) => val.childId === childId && val.ageCategory === ageCategory);
   }
 
   if (!limit) {
-    return shuffled;
+    paginated = recipes;
+  } else {
+    paginated = recipes.slice(0, limit);
   }
-
-  paginated = shuffled.slice(0, limit);
 
   return paginated;
 };
@@ -120,5 +135,4 @@ module.exports = {
   paginateFoodRecom,
   datafromML,
   searchingFoodRecom,
-  searchingArticle,
 };

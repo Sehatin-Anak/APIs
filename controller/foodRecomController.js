@@ -1,37 +1,40 @@
 const { PrismaClient } = require("@prisma/client");
-const { paginateFoodRecom, datafromML} = require("../utils/utils");
+const {
+  paginateFoodRecom,
+  datafromML,
+} = require("../utils/utils");
 const prisma = new PrismaClient();
 
 exports.getRecomend = async (req, res) => {
   const pagination = req.query.pagination;
-  const userId = req.params.userId
+  const userId = req.params.userId;
   let finalData;
-
+  
   try {
     const child = await prisma.child.findUnique({
-      where: { userId }
+      where: { userId },
     });
 
     const foodRecom = await prisma.foodRecom.findMany({
       where: {
         childId: child.id,
-        ageCategory: child.ageCategory
+        ageCategory: child.ageCategory,
       },
       include: {
         nutritionInfo: true,
         Ingredients: true,
         Instructions: {
           orderBy: {
-            stepOrder: 'asc'
-          }
-        }
-      }
-    })
+            stepOrder: "asc",
+          },
+        },
+      },
+    });
 
     if (foodRecom.length === 0) {
-      const datas = await datafromML(child.ageCategory || null)
       const created = [];
-      
+      const datas = await datafromML(child.ageCategory || null);
+
       for (let i = 0; i < datas.length; i++) {
         const create = await prisma.foodRecom.create({
           data: {
@@ -64,14 +67,24 @@ exports.getRecomend = async (req, res) => {
         created.push(create);
       }
 
-      finalData = paginateFoodRecom(created, pagination);
+      if (!pagination) {
+        finalData = created
+      } else {
+        finalData = created.slice(0, pagination)
+      }
 
       return res.status(200).json({
         message: 'Data created',
         data: finalData,
       });
     }
-    finalData = paginateFoodRecom(foodRecom, pagination);
+
+    finalData = await paginateFoodRecom(
+      foodRecom,
+      child.id,
+      child.ageCategory,
+      pagination
+    );
 
     res.status(200).json({
       data: finalData,
@@ -79,7 +92,7 @@ exports.getRecomend = async (req, res) => {
   } catch (error) {
     res.status(400).json({
       errorName: error.name,
-      errorMessage: error.message
+      errorMessage: error.message,
     });
   }
 };
@@ -97,8 +110,8 @@ exports.getUniqueRecom = async (req, res) => {
         Ingredients: true,
         Instructions: {
           orderBy: {
-            stepOrder: 'asc'
-          }
+            stepOrder: "asc",
+          },
         },
       },
     });
@@ -109,7 +122,7 @@ exports.getUniqueRecom = async (req, res) => {
   } catch (error) {
     res.status(400).json({
       errorName: error.name,
-      errorMessage: error.message
+      errorMessage: error.message,
     });
   }
 };

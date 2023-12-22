@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const { searchingFoodRecom, searchingArticle } = require("../utils/utils");
+const { searchingFoodRecom} = require("../utils/utils");
 const prisma = new PrismaClient();
 
 const search = async (req, res) => {
@@ -10,23 +10,27 @@ const search = async (req, res) => {
       include: {
         nutritionInfo: true,
         Ingredients: true,
-        Instructions: true,
+        Instructions: {
+          orderBy: {
+            stepOrder: "asc",
+          },
+        },
       },
     });
 
-    const articles = await prisma.article.findMany({
-      include: {
-        author: true,
-      },
-    });
+    // const articles = await prisma.article.findMany({
+    //   include: {
+    //     author: true,
+    //   },
+    // });
 
     const foodRecomResult = searchingFoodRecom(foodRecom, search)
-    const articleResult = searchingArticle(articles, search)
+    // const articleResult = searchingArticle(articles, search)
 
     res.status(200).json({
       data: {
         foodRecom: foodRecomResult,
-        articles: articleResult
+        // articles: articleResult
       },
     });
   } catch (error) {
