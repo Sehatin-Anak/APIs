@@ -10,7 +10,11 @@ const search = async (req, res) => {
       include: {
         nutritionInfo: true,
         Ingredients: true,
-        Instructions: true,
+        Instructions: {
+          orderBy: {
+            stepOrder: "asc",
+          },
+        },
       },
     });
 
