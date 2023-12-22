@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const schedule = require("node-schedule");
 let dataRecipe;
 
-const job = schedule.scheduleJob("59 59 3 * * *", async () => {
+const job = schedule.scheduleJob("1 1 9 * * *", async () => {
   dataRecipe = await prisma.foodRecom.findMany();
 
   for (let i = dataRecipe.length - 1; i > 0; i--) {
